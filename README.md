@@ -1,0 +1,1 @@
+# plugin-screenpanel-hex-editor
