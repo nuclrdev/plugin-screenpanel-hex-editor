@@ -37,7 +37,7 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 
 	private static final String PLUGIN_ID = "dev.nuclr.plugin.core.hex.editor";
 	private static final String PLUGIN_NAME = "Hex Editor";
-	private static final String PLUGIN_VERSION = "1.0.0";
+	private static final String PLUGIN_VERSION = loadVersion();
 	private static final String PLUGIN_DESCRIPTION = "Fullscreen hexadecimal viewer/editor.";
 	private static final String PLUGIN_AUTHOR = "Nuclr Development Team";
 	private static final String PLUGIN_LICENSE = "Apache-2.0";
@@ -130,6 +130,16 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 	@Override
 	public String version() {
 		return PLUGIN_VERSION;
+	}
+	private static String loadVersion() {
+		try (var stream = EditPlugin.class.getResourceAsStream("/plugin.properties")) {
+			if (stream == null) return "unknown";
+			var props = new java.util.Properties();
+			props.load(stream);
+			return props.getProperty("version", "unknown");
+		} catch (java.io.IOException e) {
+			return "unknown";
+		}
 	}
 
 	@Override
