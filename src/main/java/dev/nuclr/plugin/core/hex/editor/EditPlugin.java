@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.exbin.auxiliary.binary_data.array.ByteArrayEditableData;
@@ -27,13 +27,13 @@ import org.exbin.bined.swing.basic.CodeArea;
 
 import dev.nuclr.platform.NuclrThemeScheme;
 import dev.nuclr.platform.events.NuclrEventListener;
+import dev.nuclr.platform.plugin.FullscreenNuclrPlugin;
 import dev.nuclr.platform.plugin.NuclrMenuResource;
-import dev.nuclr.platform.plugin.NuclrPlugin;
+import dev.nuclr.platform.plugin.NuclrPluginCallback;
 import dev.nuclr.platform.plugin.NuclrPluginContext;
-import dev.nuclr.platform.plugin.NuclrPluginRole;
-import dev.nuclr.platform.plugin.NuclrResourcePath;
+import dev.nuclr.platform.plugin.NuclrResource;
 
-public class EditPlugin implements NuclrPlugin, NuclrEventListener {
+public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 
 	private static final String PLUGIN_ID = "dev.nuclr.plugin.core.hex.editor";
 	private static final String PLUGIN_NAME = "Hex Editor";
@@ -56,7 +56,7 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 	private final ByteArrayEditableData contentData = new ByteArrayEditableData();
 
 	private NuclrPluginContext context;
-	private NuclrResourcePath currentResource;
+	private NuclrResource currentResource;
 	private boolean dirty;
 
 	public EditPlugin() {
@@ -77,21 +77,6 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 
 	protected boolean isEditable() {
 		return true;
-	}
-
-	@Override
-	public void handleMessage(Object source, String type, Map<String, Object> event) {
-		if (SAVE_ACTION.equals(type) && isFocused()) {
-			saveQuietly();
-			return;
-		}
-		if (TOGGLE_OPERATION_ACTION.equals(type) && isFocused() && isEditable()) {
-			toggleEditOperation();
-			return;
-		}
-		if (TOGGLE_VIEW_ACTION.equals(type) && isFocused()) {
-			toggleViewMode();
-		}
 	}
 
 	@Override
@@ -173,17 +158,12 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 	}
 
 	@Override
-	public Developer type() {
-		return Developer.Official;
-	}
-
-	@Override
 	public JComponent panel() {
 		return panel;
 	}
 
 	@Override
-	public boolean supports(NuclrResourcePath resource) {
+	public boolean supports(NuclrResource resource) {
 		return resource != null
 				&& resource.getPath() != null
 				&& Files.isRegularFile(resource.getPath())
@@ -191,28 +171,23 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 	}
 
 	@Override
-	public NuclrPluginRole role() {
-		return NuclrPluginRole.FullScreenEditor;
-	}
-
-	@Override
-	public List<NuclrMenuResource> menuItems(NuclrResourcePath resource) {
+	public List<NuclrMenuResource> menuItems(NuclrResource resource) {
 		if (!isEditable()) {
 			return List.of(
-					new MenuResource("Mode", "F2", TOGGLE_VIEW_ACTION),
-					new MenuResource("Quit", "F3", CLOSE_FULLSCREEN_ACTION));
+					new NuclrMenuResource("Mode", "F2", TOGGLE_VIEW_ACTION),
+					new NuclrMenuResource("Quit", "F3", CLOSE_FULLSCREEN_ACTION));
 		}
 		return List.of(
-				new MenuResource("Mode", "F2", TOGGLE_VIEW_ACTION),
-				new MenuResource("Quit", "F3", CLOSE_FULLSCREEN_ACTION),
-				new MenuResource("Save", "F4", SAVE_ACTION),
-				new MenuResource("Toggle Ovr", "F6", TOGGLE_OPERATION_ACTION));
+				new NuclrMenuResource("Mode", "F2", TOGGLE_VIEW_ACTION),
+				new NuclrMenuResource("Quit", "F3", CLOSE_FULLSCREEN_ACTION),
+				new NuclrMenuResource("Save", "F4", SAVE_ACTION),
+				new NuclrMenuResource("Toggle Ovr", "F6", TOGGLE_OPERATION_ACTION));
 	}
 
 	@Override
-	public void load(NuclrPluginContext context, boolean isTemplate) {
+	public void preinit(NuclrPluginContext context) {
 		this.context = context;
-		if (!isTemplate && context != null && context.getEventBus() != null) {
+		if (context != null && context.getEventBus() != null) {
 			context.getEventBus().subscribe(this);
 		}
 		applyUiTheme(context != null ? context.getTheme() : null);
@@ -226,7 +201,7 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 	}
 
 	@Override
-	public boolean openResource(NuclrResourcePath resource, AtomicBoolean cancelled) {
+	public boolean openResource(NuclrResource resource, AtomicBoolean cancelled) {
 		if (cancelled != null && cancelled.get()) {
 			return false;
 		}
@@ -263,13 +238,8 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 	}
 
 	@Override
-	public NuclrResourcePath getCurrentResource() {
+	public NuclrResource getCurrentResource() {
 		return currentResource;
-	}
-
-	@Override
-	public int priority() {
-		return 100;
 	}
 
 	@Override
@@ -397,5 +367,44 @@ public class EditPlugin implements NuclrPlugin, NuclrEventListener {
 		}
 		Color color = UIManager.getColor(key);
 		return color != null ? color : fallback;
+	}
+
+	@Override
+	public Developer developer() {
+		return Developer.Official;
+	}
+
+	@Override
+	public NuclrPluginContext getContext() {
+		return context;
+	}
+
+	@Override
+	public void init() {
+		
+	}
+
+	@Override
+	public void handleMessage(Object source, String type, Map<String, Object> eventData, NuclrPluginCallback callback) {
+		
+		if (SAVE_ACTION.equals(type) && isFocused()) {
+			saveQuietly();
+			return;
+		}
+		
+		if (TOGGLE_OPERATION_ACTION.equals(type) && isFocused() && isEditable()) {
+			toggleEditOperation();
+			return;
+		}
+		
+		if (TOGGLE_VIEW_ACTION.equals(type) && isFocused()) {
+			toggleViewMode();
+		}
+		
+	}
+
+	@Override
+	public Role role() {
+		return Role.Editor;
 	}
 }
