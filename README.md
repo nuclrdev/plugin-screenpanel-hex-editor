@@ -45,22 +45,23 @@ Nuclr Commander verifies the RSA-SHA256 signature against `nuclr-cert.pem` on lo
 
 ## ⚙️ How it works
 
-`EditPlugin` implements `NuclrPlugin` with `NuclrPluginRole.FullScreenEditor`. It loads the entire file into a `ByteArrayEditableData` buffer in memory and binds a Bined `CodeArea` to it. `ViewPlugin` extends `EditPlugin` and overrides `isEditable()` to return `false` and sets the role to `FullScreenViewer`. Theme colors are applied via `NuclrThemeScheme` on every `updateTheme` call. Save operations write the buffer to the file via `contentData.saveToStream(out)`.
+`EditPlugin` implements `FullscreenNuclrPlugin` (plus `NuclrEventListener`) in the editor role. It loads the entire file into a `ByteArrayEditableData` buffer in memory and binds a Bined `CodeArea` to it. `ViewPlugin` extends `EditPlugin`, overrides `isEditable()` to return `false`, and reports the viewer role instead — so the two share all rendering and navigation code. Theme colors are applied via `NuclrThemeScheme` on every `updateTheme` call. Save operations write the buffer to the file via `contentData.saveToStream(out)`.
+
+Because the file is held entirely in memory, this is best suited to files that comfortably fit in the heap.
 
 ## 🗂️ Source Layout
 
 ```text
 src/main/java/dev/nuclr/plugin/core/hex/editor/
-├── EditPlugin.java     hex editor entry point (FullScreenEditor role)
-├── ViewPlugin.java     hex viewer entry point (FullScreenViewer role)
-└── MenuResource.java   function-key menu item definition
+├── EditPlugin.java     hex editor entry point (editor role) — UI, key bindings, save
+└── ViewPlugin.java     hex viewer entry point (viewer role) — read-only subclass
 ```
 
 ## 📚 Dependencies
 
 | Library | Version | Purpose |
 |---|---|---|
-| `dev.nuclr:platform-sdk` | `2.0.4` | Nuclr platform interfaces |
+| `dev.nuclr:platform-sdk` | `3.0.2` | Nuclr platform interfaces |
 | `bined-swing` | `0.2.2` | Core Bined hex editor Swing component |
 | `bined-highlight-swing` | `0.2.2` | Syntax/highlight layer for Bined |
 | `bined-swing-section` | `0.2.2` | Section-based rendering for Bined |
