@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "version": "${project.version}",
+  "platformSdkVersion": "4.0.0",
+	"plugins": [
+		{
+			"class": "dev.nuclr.plugin.core.hex.editor.EditPlugin",
+			"type": "Fullscreen",
+			"id": "dev.nuclr.plugin.core.hex.editor",
+			"name": "Hex Editor",
+			"version": "${project.version}",
+			"description": "Fullscreen hexadecimal viewer/editor.",
+			"author": "Nuclr Development Team",
+			"license": "Apache-2.0",
+			"website": "https://nuclr.dev",
+			"pageUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
+			"docUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
+			"developer": "Official",
+			"singleton": true,
+			"role": "Editor"
+		},
+		{
+			"class": "dev.nuclr.plugin.core.hex.editor.ViewPlugin",
+			"type": "Fullscreen",
+			"id": "dev.nuclr.plugin.core.hex.viewer",
+			"name": "Hex Viewer",
+			"version": "${project.version}",
+			"description": "Fullscreen hexadecimal viewer/editor.",
+			"author": "Nuclr Development Team",
+			"license": "Apache-2.0",
+			"website": "https://nuclr.dev",
+			"pageUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
+			"docUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
+			"developer": "Official",
+			"singleton": true,
+			"role": "Viewer"
+		}
+	]
+}

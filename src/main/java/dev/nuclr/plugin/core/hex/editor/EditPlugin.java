@@ -35,15 +35,6 @@ import dev.nuclr.platform.plugin.NuclrResource;
 
 public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 
-	private static final String PLUGIN_ID = "dev.nuclr.plugin.core.hex.editor";
-	private static final String PLUGIN_NAME = "Hex Editor";
-	private static final String PLUGIN_VERSION = loadVersion();
-	private static final String PLUGIN_DESCRIPTION = "Fullscreen hexadecimal viewer/editor.";
-	private static final String PLUGIN_AUTHOR = "Nuclr Development Team";
-	private static final String PLUGIN_LICENSE = "Apache-2.0";
-	private static final String PLUGIN_WEBSITE = "https://nuclr.dev";
-	private static final String PLUGIN_PAGE_URL = "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html";
-	private static final String PLUGIN_DOC_URL = PLUGIN_PAGE_URL;
 	private static final String CLOSE_FULLSCREEN_ACTION = "plugin.fullscreen.close";
 	private static final String SAVE_ACTION = "plugin.hex.editor.save";
 	private static final String TOGGLE_OPERATION_ACTION = "plugin.hex.editor.toggleOperation";
@@ -100,61 +91,6 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 		return codeArea.isFocusOwner()
 				|| scrollPane.isFocusOwner()
 				|| panel.isFocusOwner();
-	}
-
-	@Override
-	public String id() {
-		return PLUGIN_ID;
-	}
-
-	@Override
-	public String name() {
-		return PLUGIN_NAME;
-	}
-
-	@Override
-	public String version() {
-		return PLUGIN_VERSION;
-	}
-	private static String loadVersion() {
-		try (var stream = EditPlugin.class.getResourceAsStream("/plugin.properties")) {
-			if (stream == null) return "unknown";
-			var props = new java.util.Properties();
-			props.load(stream);
-			return props.getProperty("version", "unknown");
-		} catch (java.io.IOException e) {
-			return "unknown";
-		}
-	}
-
-	@Override
-	public String description() {
-		return PLUGIN_DESCRIPTION;
-	}
-
-	@Override
-	public String author() {
-		return PLUGIN_AUTHOR;
-	}
-
-	@Override
-	public String license() {
-		return PLUGIN_LICENSE;
-	}
-
-	@Override
-	public String website() {
-		return PLUGIN_WEBSITE;
-	}
-
-	@Override
-	public String pageUrl() {
-		return PLUGIN_PAGE_URL;
-	}
-
-	@Override
-	public String docUrl() {
-		return PLUGIN_DOC_URL;
 	}
 
 	@Override
@@ -369,10 +305,6 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 		return color != null ? color : fallback;
 	}
 
-	@Override
-	public Developer developer() {
-		return Developer.Official;
-	}
 
 	@Override
 	public NuclrPluginContext getContext() {
@@ -403,8 +335,5 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 		
 	}
 
-	@Override
-	public Role role() {
-		return Role.Editor;
-	}
+
 }
