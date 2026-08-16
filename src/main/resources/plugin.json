@@ -13,8 +13,8 @@
 			"author": "Nuclr Development Team",
 			"license": "Apache-2.0",
 			"website": "https://nuclr.dev",
-			"pageUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
-			"docUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
+			"pageUrl": "https://github.com/nuclrdev/plugin-screenpanel-hex-editor",
+			"docUrl": "https://github.com/nuclrdev/plugin-screenpanel-hex-editor",
 			"developer": "Official",
 			"singleton": true,
 			"role": "Editor"
@@ -29,8 +29,8 @@
 			"author": "Nuclr Development Team",
 			"license": "Apache-2.0",
 			"website": "https://nuclr.dev",
-			"pageUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
-			"docUrl": "https://nuclr.dev/plugins/core/screenpanel-hex-editor.html",
+			"pageUrl": "https://github.com/nuclrdev/plugin-screenpanel-hex-editor",
+			"docUrl": "https://github.com/nuclrdev/plugin-screenpanel-hex-editor",
 			"developer": "Official",
 			"singleton": true,
 			"role": "Viewer"
