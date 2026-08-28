@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -66,8 +67,16 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 		applyUiTheme(null);
 	}
 
+	/**
+	 * Whether the open resource can be written back.
+	 *
+	 * <p>Only a resource with a local file can be: the resource API offers a way to read one but
+	 * not to write one, so anything remote is held read-only.
+	 *
+	 * @return {@code true} when edits can be saved
+	 */
 	protected boolean isEditable() {
-		return true;
+		return currentResource == null || currentResource.getPath() != null;
 	}
 
 	@Override
@@ -93,17 +102,37 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 				|| panel.isFocusOwner();
 	}
 
+	/** The largest resource with no local file this plugin will open. */
+	private static final long MAX_REMOTE_BYTES = 32L * 1024 * 1024;
+
 	@Override
 	public JComponent panel() {
 		return panel;
 	}
 
+	/**
+	 * Whether this plugin can open {@code resource}.
+	 *
+	 * <p>A resource with no local file — a bucket object, a remote listing entry — is opened
+	 * read-only: its bytes are read through the resource itself, and {@link #isEditable()}
+	 * withholds saving, because {@link NuclrResource} can read a resource but not write one back.
+	 *
+	 * @param resource the resource to open
+	 * @return {@code true} when it can be shown here
+	 */
 	@Override
 	public boolean supports(NuclrResource resource) {
-		return resource != null
-				&& resource.getPath() != null
-				&& Files.isRegularFile(resource.getPath())
-				&& Files.isReadable(resource.getPath());
+		if (resource == null || resource.isFolder() || !resource.isReadable()) {
+			return false;
+		}
+		Path path = resource.getPath();
+		if (path == null) {
+			// Reading one means a network fetch on the event dispatch thread, and the bytes are
+			// held in memory once they arrive, so a remote resource is only opened up to a size
+			// that keeps both bearable.
+			return resource.getLength() <= MAX_REMOTE_BYTES;
+		}
+		return Files.isRegularFile(path) && Files.isReadable(path);
 	}
 
 	@Override
@@ -144,8 +173,14 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 		if (!supports(resource)) {
 			return false;
 		}
+		currentResource = resource;
 		try {
-			byte[] bytes = Files.readAllBytes(resource.getPath());
+			// Read through the resource rather than its path, so an entry with no local file
+			// opens on the same terms as one with.
+			byte[] bytes;
+			try (var in = resource.openInputStream()) {
+				bytes = in.readAllBytes();
+			}
 			if (cancelled != null && cancelled.get()) {
 				return false;
 			}
@@ -156,11 +191,9 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 			codeArea.setEditOperation(EditOperation.OVERWRITE);
 			codeArea.setActiveCaretPosition(0);
 			codeArea.revealCursor();
-			currentResource = resource;
 			dirty = false;
 			return true;
 		} catch (Exception ex) {
-			currentResource = resource;
 			return false;
 		}
 	}
