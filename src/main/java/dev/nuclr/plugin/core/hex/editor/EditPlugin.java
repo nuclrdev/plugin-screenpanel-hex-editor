@@ -130,9 +130,23 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 			// Reading one means a network fetch on the event dispatch thread, and the bytes are
 			// held in memory once they arrive, so a remote resource is only opened up to a size
 			// that keeps both bearable.
-			return resource.getLength() <= MAX_REMOTE_BYTES;
+			if (resource.getLength() > MAX_REMOTE_BYTES) {
+				return false;
+			}
+			// A length of 0 is also what a resource reports when its size is unknown, including
+			// rows that are not files at all (an AI project, say), so it has to show it can be read.
+			return resource.getLength() > 0 || canOpen(resource);
 		}
 		return Files.isRegularFile(path) && Files.isReadable(path);
+	}
+
+	/** Whether the resource's content can be opened at all; the default resource cannot. */
+	private static boolean canOpen(NuclrResource resource) {
+		try (var in = resource.openInputStream()) {
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
