@@ -63,9 +63,6 @@ src/main/java/dev/nuclr/plugin/core/hex/editor/
 |---|---|---|
 | `dev.nuclr:platform-sdk` | `3.0.2` | Nuclr platform interfaces |
 | `bined-swing` | `0.2.2` | Core Bined hex editor Swing component |
-| `bined-highlight-swing` | `0.2.2` | Syntax/highlight layer for Bined |
-| `bined-swing-section` | `0.2.2` | Section-based rendering for Bined |
-| `bined-operation-swing` | `0.2.2` | Edit operations for Bined |
 | `binary_data` | `0.2.2` | ExBin binary data abstraction |
 | `binary_data-array` | `0.2.2` | Array-backed binary data implementation |
 

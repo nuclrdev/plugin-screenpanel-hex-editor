@@ -34,25 +34,7 @@
 
 		<dependency>
 			<groupId>org.exbin.bined</groupId>
-			<artifactId>bined-highlight-swing</artifactId>
-			<version>${bined.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.exbin.bined</groupId>
 			<artifactId>bined-swing</artifactId>
-			<version>${bined.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.exbin.bined</groupId>
-			<artifactId>bined-swing-section</artifactId>
-			<version>${bined.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.exbin.bined</groupId>
-			<artifactId>bined-operation-swing</artifactId>
 			<version>${bined.version}</version>
 		</dependency>
 
