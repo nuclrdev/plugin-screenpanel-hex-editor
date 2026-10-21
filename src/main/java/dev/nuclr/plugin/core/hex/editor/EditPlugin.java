@@ -1,5 +1,7 @@
 package dev.nuclr.plugin.core.hex.editor;
 
+import static dev.nuclr.plugin.core.hex.editor.Messages.tr;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -153,19 +155,22 @@ public class EditPlugin implements FullscreenNuclrPlugin, NuclrEventListener {
 	public List<NuclrMenuResource> menuItems(NuclrResource resource) {
 		if (!isEditable()) {
 			return List.of(
-					new NuclrMenuResource("Mode", "F2", TOGGLE_VIEW_ACTION),
-					new NuclrMenuResource("Quit", "F3", CLOSE_FULLSCREEN_ACTION));
+					new NuclrMenuResource(tr("menu.mode"), "F2", TOGGLE_VIEW_ACTION),
+					new NuclrMenuResource(tr("menu.quit"), "F3", CLOSE_FULLSCREEN_ACTION));
 		}
 		return List.of(
-				new NuclrMenuResource("Mode", "F2", TOGGLE_VIEW_ACTION),
-				new NuclrMenuResource("Quit", "F3", CLOSE_FULLSCREEN_ACTION),
-				new NuclrMenuResource("Save", "F4", SAVE_ACTION),
-				new NuclrMenuResource("Toggle Ovr", "F6", TOGGLE_OPERATION_ACTION));
+				new NuclrMenuResource(tr("menu.mode"), "F2", TOGGLE_VIEW_ACTION),
+				new NuclrMenuResource(tr("menu.quit"), "F3", CLOSE_FULLSCREEN_ACTION),
+				new NuclrMenuResource(tr("menu.save"), "F4", SAVE_ACTION),
+				new NuclrMenuResource(tr("menu.toggle.overwrite"), "F6", TOGGLE_OPERATION_ACTION));
 	}
 
 	@Override
 	public void preinit(NuclrPluginContext context) {
 		this.context = context;
+		if (context != null) {
+			Messages.use(context.getLocale());
+		}
 		if (context != null && context.getEventBus() != null) {
 			context.getEventBus().subscribe(this);
 		}
